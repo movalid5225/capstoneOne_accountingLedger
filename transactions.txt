@@ -1,0 +1,7 @@
+date|time|description|vendor|amount
+2023-04-15|10:13:25|ergonomic keyboard|Amazon|-89.50
+2023-04-15|11:15:00|Invoice 1001 paid|Joe|1500.00
+2025-04-29|15:38:34.937418|Moose Knuckles|Amazon|50.0
+2025-04-29|15:54:07|PS5 Controller|Amazon|75.99
+2025-04-29|15:56:30|P|Temu|-43.5
+2025-04-29|15:59:14|Butt|Butter|-30.5
