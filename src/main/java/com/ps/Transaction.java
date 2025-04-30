@@ -1,8 +1,12 @@
 package com.ps;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+
 public class Transaction {
-    private String date;
-    private String time;
+    private LocalDate date;
+    private LocalTime time;
     private String description;
     private String vendor;
     private double amount;
@@ -10,13 +14,13 @@ public class Transaction {
     public Transaction() {
         this.amount = 0;
         this.vendor = "";
-        this.time = "";
+        this.time = null;
         this.description = "";
-        this.date = "";
+        this.date = null;
     }
 
 //  Parametrized constructor
-    public Transaction(double amount, String vendor, String time, String description, String date) {
+    public Transaction(LocalDate date, LocalTime time, String description, String vendor ,double amount) {
         this.amount = amount;
         this.vendor = vendor;
         this.time = time;
@@ -25,11 +29,11 @@ public class Transaction {
     }
 
 //  Getters and Setters
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(LocalTime time) {
         this.time = time;
     }
 
@@ -49,11 +53,11 @@ public class Transaction {
         this.description = description;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -64,4 +68,19 @@ public class Transaction {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    public void printTransaction(){
+        String timeStr = this.getTime().truncatedTo(ChronoUnit.SECONDS).toString();
+        System.out.println("-------------------------------");
+        System.out.println("Date       : " + this.getDate());
+        System.out.println("Time       : " + timeStr);
+        System.out.println("Description: " + this.getDescription());
+        System.out.println("Vendor     : " + this.getVendor());
+
+        String formattedAmount = String.format("+$%.2f", this.getAmount());
+        System.out.println("Amount     : " + formattedAmount);
+
+        System.out.println("-------------------------------");
+    }
+
 }
