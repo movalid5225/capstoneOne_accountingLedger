@@ -1,7 +1,4 @@
 package com.ps;
-import org.w3c.dom.ls.LSOutput;
-
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
@@ -14,6 +11,7 @@ public class Actions {
     private static final ArrayList<Transaction> transactions = new ArrayList<>();
     private static final Scanner scanner = new Scanner(System.in);
 
+//  Home screen
     public static void displayHomeScreen() {
         String choice;
         do {
@@ -45,8 +43,9 @@ public class Actions {
     }
 
 
-    //  HomeScreen functions
+    //  Home screen functions
     private static void addDeposit() {
+        String transactionType = "DEPOSIT";
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
         String timeStr = time.truncatedTo(ChronoUnit.SECONDS).toString();
@@ -57,7 +56,7 @@ public class Actions {
         System.out.print("ENTER THE NAME OF THE VENDOR: ");
         String name = scanner.nextLine();
 
-        double amount = 0;
+        double amount;
         while (true) {
             System.out.print("ENTER YOUR DEPOSIT AMOUNT: ");
             String amountStr = scanner.nextLine();
@@ -77,35 +76,11 @@ public class Actions {
         Transaction transaction = new Transaction(date, time, description, name, amount);
         transactions.add(transaction);
 
-        try {
-            BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Transactions.txt", true));
-
-            String line = date + "|" + timeStr + "|" + description + "|" + name + "|" + amount;
-            buffWriter.write(line);
-            buffWriter.newLine();
-
-            buffWriter.close();
-            System.out.print("\n\nProcessing");
-            for (int i = 0; i < 3; i++) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.print(".");
-            }
-            System.out.println("\n");
-            transaction.printTransaction();
-            System.out.println("\n\n======================");
-            System.out.println("**DEPOSIT SUCCESSFUL**");
-            System.out.println("======================\n");
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        writeTransaction(date, timeStr, description, name, amount, transactionType, transaction);
     }
 
     private static void makePayment() {
+        String transactionType = "PAYMENT";
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
         String timeStr = time.truncatedTo(ChronoUnit.SECONDS).toString();
@@ -116,7 +91,7 @@ public class Actions {
         System.out.print("ENTER THE NAME OF THE VENDOR: ");
         String name = scanner.nextLine();
 
-        double amount = 0;
+        double amount;
         while(true ){
             System.out.print("ENTER YOUR PAYMENT AMOUNT: ");
             String amountStr = scanner.nextLine();
@@ -135,33 +110,10 @@ public class Actions {
         }
 
         amount *= -1;
-        Transaction transaction = new Transaction(date, time, description, name, (amount));
+        Transaction transaction = new Transaction(date, time, description, name, amount);
         transactions.add(transaction);
 
-        try {
-            BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Transactions.txt", true));
-
-            String line = date + "|" + timeStr + "|" + description + "|" + name + "|" + amount;
-            buffWriter.write(line);
-            buffWriter.newLine();
-            buffWriter.close();
-            System.out.print("\n\nProcessing");
-            for (int i = 0; i < 3; i++) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.print(".");
-            }
-
-            System.out.println("\n\n\n======================");
-            System.out.println("** PAYMENT SUCCESSFUL **");
-            System.out.println("======================\n");
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        writeTransaction(date, timeStr, description, name, amount, transactionType, transaction);
     }
 
     private static void openLedger() {
@@ -197,45 +149,82 @@ public class Actions {
         }
     }
 
+
+
+//  Helper
+    private static void writeTransaction(LocalDate date, String timeStr, String description ,String name, double amount, String transactionType, Transaction transaction){
+        try {
+            BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Transactions.txt", true));
+
+            String line = date + "|" + timeStr + "|" + description + "|" + name + "|" + amount;
+            buffWriter.write(line);
+            buffWriter.newLine();
+            buffWriter.close();
+            System.out.print("\n\nProcessing");
+            for (int i = 0; i < 3; i++) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.out.println("Error with .sleep method");
+                }
+                System.out.print(".");
+            }
+
+            transaction.printTransaction();
+            System.out.println("\n\n\n======================");
+            System.out.println("** " +transactionType+ " SUCCESSFUL **");
+            System.out.println("======================\n");
+        }
+        catch(Exception e){
+            System.out.println("Could not write to file");
+        }
+    }
+
+
+
 //  Ledger functions
     private static void displayReports() {
-        System.out.println("SELECT A REPORT");
-        System.out.println("1)MONTH TO DATE");
-        System.out.println("2)PREVIOUS MONTH");
-        System.out.println("3)YEAR TO DATE");
-        System.out.println("4)PREVIOUS YEAR");
-        System.out.println("5)SEARCH BY VENDOR");
-        System.out.println("0)GO BACK TO HOME");
+        while(true) {
+            System.out.println("SELECT A REPORT");
+            System.out.println("1)MONTH TO DATE");
+            System.out.println("2)PREVIOUS MONTH");
+            System.out.println("3)YEAR TO DATE");
+            System.out.println("4)PREVIOUS YEAR");
+            System.out.println("5)SEARCH BY VENDOR");
+            System.out.println("0)GO BACK TO HOME");
 
-        short choice = 0;
-        while(true){
-            try{
-                choice = Short.parseShort(scanner.nextLine());
-                break;
+            short choice;
+            while (true) {
+                try {
+                    choice = Short.parseShort(scanner.nextLine());
+                    break;
+                } catch (Exception e) {
+                    System.out.print("PLEASE ENTER A VALID OPTION: ");
+                }
             }
-            catch(Exception e){
-                System.out.print("PLEASE ENTER A VALID OPTION: ");
-            }
-        }
 
-        switch(choice){
-            case 1:
-                Reports.monthToDate();
-                break;
-            case 2:
-                Reports.previousMonth();
-                break;
-            case 3:
-                Reports.yearToDate();
-                break;
-            case 4:
-                Reports.previousYear();
-                break;
-            case 5:
-                Reports.searchByVendor();
-                break;
-            case 0:
-                System.out.println("\n\nGOING BACK.....");
+            switch (choice) {
+                case 1:
+                    Reports.monthToDate();
+                    break;
+                case 2:
+                    Reports.previousMonth();
+                    break;
+                case 3:
+                    Reports.yearToDate();
+                    break;
+                case 4:
+                    Reports.previousYear();
+                    break;
+                case 5:
+                    Reports.searchByVendor();
+                    break;
+                case 0:
+                    System.out.println("\n\nGOING BACK.....");
+                    return;
+                default:
+                    System.out.println("ENTER A VALID OPTION");
+            }
         }
     }
 
@@ -248,6 +237,7 @@ public class Actions {
         }
     }
 
+
     private static void displayDeposits() {
         for(Transaction transaction : transactions){
             if(transaction.getAmount() > 0){
@@ -255,6 +245,7 @@ public class Actions {
             }
         }
     }
+
 
     private static void displayAllTransactions() {
         for(Transaction transaction : transactions){
