@@ -10,6 +10,7 @@ public class Transaction {
     private String description;
     private String vendor;
     private double amount;
+    private String category;
 
     public Transaction() {
         this.amount = 0;
@@ -17,15 +18,17 @@ public class Transaction {
         this.time = null;
         this.description = "";
         this.date = null;
+        this.category = "";
     }
 
 //  Parametrized constructor
-    public Transaction(LocalDate date, LocalTime time, String description, String vendor ,double amount) {
+    public Transaction(LocalDate date, LocalTime time, String description, String vendor ,double amount, String category) {
         this.amount = amount;
         this.vendor = vendor;
         this.time = time;
         this.description = description;
         this.date = date;
+        this.category = category;
     }
 
 //  Getters and Setters
@@ -69,6 +72,13 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
     public void printTransaction(){
         String timeStr = this.getTime().truncatedTo(ChronoUnit.SECONDS).toString();
         System.out.println("-------------------------------");
@@ -79,7 +89,7 @@ public class Transaction {
 
         String formattedAmount = String.format("+$%.2f", this.getAmount());
         System.out.println("Amount     : " + formattedAmount);
-
+        System.out.println("Category   : " + this.getCategory());
         System.out.println("-------------------------------");
     }
 

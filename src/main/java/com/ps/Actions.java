@@ -1,4 +1,6 @@
 package com.ps;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.io.BufferedWriter;
@@ -7,18 +9,56 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+
+
+
+
 public class Actions {
-    private static final ArrayList<Transaction> transactions = new ArrayList<>();
-    private static final Scanner scanner = new Scanner(System.in);
+    public static final ArrayList<Transaction> transactions = new ArrayList<>();
+    public static final Scanner scanner = new Scanner(System.in);
+
+
+
+
+//  Load text file into transactions array
+    public static void loadTransactions(){
+        try{
+            BufferedReader buffReader = new BufferedReader(new FileReader("transactions.txt"));
+            buffReader.readLine();
+            String input;
+            while((input= buffReader.readLine()) != null ){
+                String[] line = input.split("\\|");
+                LocalDate date = LocalDate.parse(line[0]);
+                LocalTime time = LocalTime.parse(line[1]);
+                Transaction transaction = new Transaction(date,time, line[2], line[3], Double.parseDouble(line[4]),line[5]);
+                transactions.add(transaction);
+            }
+
+            buffReader.close();
+        }
+        catch(Exception e){
+            System.out.println("COULD NOT READ FILE");
+        }
+    }
+
+
+
+
 
 //  Home screen
     public static void displayHomeScreen() {
         String choice;
         do {
+            System.out.println("\n====================================");
+            System.out.println("*** WELCOME TO YOUR BANK ACCOUNT ***");
+            System.out.println("====================================\n");
+
+            System.out.println("==========================");
             System.out.println("D)ADD DEPOSIT");
             System.out.println("P)MAKE PAYMENT");
             System.out.println("L)LEDGER");
             System.out.println("X)EXIT THE APPLICATION");
+            System.out.println("==========================\n");
 
             choice = scanner.nextLine();
             choice = choice.toUpperCase();
@@ -43,6 +83,9 @@ public class Actions {
     }
 
 
+
+
+
     //  Home screen functions
     private static void addDeposit() {
         String transactionType = "DEPOSIT";
@@ -50,6 +93,9 @@ public class Actions {
         LocalTime time = LocalTime.now();
         String timeStr = time.truncatedTo(ChronoUnit.SECONDS).toString();
 
+        System.out.println("\n==================================");
+        System.out.println("ARE YOUR READY TO MAKE A DEPOSIT?");
+        System.out.println("==================================\n");
         System.out.print("ENTER THE DESCRIPTION OF YOUR ITEM: ");
         String description = scanner.nextLine();
 
@@ -73,17 +119,48 @@ public class Actions {
             }
         }
 
-        Transaction transaction = new Transaction(date, time, description, name, amount);
+        String category;
+        short categoryNum;
+        while(true) {
+            System.out.println("ENTER CATEGORY OF YOUR ITEM");
+            System.out.println("1)HOUSING");
+            System.out.println("2)FOOD");
+            System.out.println("3)TRANSPORTATION");
+            System.out.println("4)HEALTH & PERSONAL");
+            System.out.println("5)LIFESTYLE & ENTERTAINMENT");
+            System.out.println("6)MISCELLANEOUS");
+            try{
+                categoryNum = Short.parseShort(scanner.nextLine());
+                while(categoryNum > 6 || categoryNum < 1){
+                    System.out.println("ENTER A VALID OPTION");
+                    categoryNum = Short.parseShort(scanner.nextLine());
+                }
+                category = convertToCategory(categoryNum);
+                break;
+            }catch(NumberFormatException e){
+                System.out.println("Enter a valid number option");
+            }
+        }
+
+        Transaction transaction = new Transaction(date, time, description, name, amount, category);
         transactions.add(transaction);
 
-        writeTransaction(date, timeStr, description, name, amount, transactionType, transaction);
+        writeTransaction(date, timeStr, description, name, amount,category,transactionType, transaction);
     }
+
+
+
+
 
     private static void makePayment() {
         String transactionType = "PAYMENT";
         LocalDate date = LocalDate.now();
         LocalTime time = LocalTime.now();
         String timeStr = time.truncatedTo(ChronoUnit.SECONDS).toString();
+
+        System.out.println("\n==================================");
+        System.out.println("ARE YOUR READY TO MAKE A PAYMENT?");
+        System.out.println("==================================\n");
 
         System.out.print("ENTER THE DESCRIPTION OF YOUR ITEM: ");
         String description = scanner.nextLine();
@@ -108,13 +185,38 @@ public class Actions {
                 System.out.println("INVALID INPUT. PLEASE ENTER A VALID NUMBER");
             }
         }
-
+        String category;
+        short categoryNum;
+        while(true) {
+            System.out.println("ENTER CATEGORY OF YOUR ITEM");
+            System.out.println("1)HOUSING");
+            System.out.println("2)FOOD");
+            System.out.println("3)TRANSPORTATION");
+            System.out.println("4)HEALTH & PERSONAL");
+            System.out.println("5)LIFESTYLE & ENTERTAINMENT");
+            System.out.println("6)MISCELLANEOUS");
+            try{
+                categoryNum = Short.parseShort(scanner.nextLine());
+                while(categoryNum > 6 || categoryNum < 1){
+                    System.out.print("ENTER A VALID OPTION: ");
+                    categoryNum = Short.parseShort(scanner.nextLine());
+                }
+                category = convertToCategory(categoryNum);
+                break;
+            }catch(NumberFormatException e){
+                System.out.println("Enter a valid number option");
+            }
+        }
         amount *= -1;
-        Transaction transaction = new Transaction(date, time, description, name, amount);
+        Transaction transaction = new Transaction(date, time, description, name, amount, category);
         transactions.add(transaction);
 
-        writeTransaction(date, timeStr, description, name, amount, transactionType, transaction);
+        writeTransaction(date, timeStr, description, name, amount,category, transactionType, transaction);
     }
+
+
+
+
 
     private static void openLedger() {
         while(true) {
@@ -151,12 +253,14 @@ public class Actions {
 
 
 
+
+
 //  Helper
-    private static void writeTransaction(LocalDate date, String timeStr, String description ,String name, double amount, String transactionType, Transaction transaction){
+    private static void writeTransaction(LocalDate date, String timeStr, String description ,String name, double amount,String category ,String transactionType, Transaction transaction){
         try {
             BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Transactions.txt", true));
 
-            String line = date + "|" + timeStr + "|" + description + "|" + name + "|" + amount;
+            String line = date + "|" + timeStr + "|" + description.toUpperCase() + "|" + name.toUpperCase() + "|" + amount+ "|" + category;
             buffWriter.write(line);
             buffWriter.newLine();
             buffWriter.close();
@@ -169,9 +273,9 @@ public class Actions {
                 }
                 System.out.print(".");
             }
-
+            System.out.println();
             transaction.printTransaction();
-            System.out.println("\n\n\n======================");
+            System.out.println("\n======================");
             System.out.println("** " +transactionType+ " SUCCESSFUL **");
             System.out.println("======================\n");
         }
@@ -179,6 +283,8 @@ public class Actions {
             System.out.println("Could not write to file");
         }
     }
+
+
 
 
 
@@ -191,6 +297,7 @@ public class Actions {
             System.out.println("3)YEAR TO DATE");
             System.out.println("4)PREVIOUS YEAR");
             System.out.println("5)SEARCH BY VENDOR");
+            System.out.println("6)VIEW CATEGORY SPENDING");
             System.out.println("0)GO BACK TO HOME");
 
             short choice;
@@ -219,6 +326,8 @@ public class Actions {
                 case 5:
                     Reports.searchByVendor();
                     break;
+                case 6:
+                    Reports.viewCategorySpending();
                 case 0:
                     System.out.println("\n\nGOING BACK.....");
                     return;
@@ -227,6 +336,9 @@ public class Actions {
             }
         }
     }
+
+
+
 
 
     private static void displayPayments() {
@@ -238,6 +350,9 @@ public class Actions {
     }
 
 
+
+
+
     private static void displayDeposits() {
         for(Transaction transaction : transactions){
             if(transaction.getAmount() > 0){
@@ -247,10 +362,24 @@ public class Actions {
     }
 
 
+
+
+
     private static void displayAllTransactions() {
         for(Transaction transaction : transactions){
             transaction.printTransaction();
         }
     }
 
+    private static String convertToCategory(short choice){
+        return switch (choice) {
+            case 1 -> "HOUSING";
+            case 2 -> "FOOD";
+            case 3 -> "TRANSPORTATION";
+            case 4 -> "HEALTH & PERSONAL";
+            case 5 -> "LIFESTYLE & ENTERTAINMENT";
+            case 6 -> "MISCELLANEOUS";
+            default -> "null";
+        };
+    }
 }
