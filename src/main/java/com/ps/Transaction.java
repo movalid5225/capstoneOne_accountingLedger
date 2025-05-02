@@ -1,7 +1,7 @@
 package com.ps;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
+import static com.ps.Actions.formatTime;
 
 public class Transaction {
     private LocalDate date;
@@ -82,14 +82,15 @@ public class Transaction {
 
 //  Prints a transaction
     public void printTransaction(){
-        String timeStr = this.getTime().truncatedTo(ChronoUnit.SECONDS).toString();
+        String timeStr = formatTime(this.getTime());
         System.out.println("-------------------------------");
         System.out.println("Date       : " + this.getDate());
         System.out.println("Time       : " + timeStr);
         System.out.println("Description: " + this.getDescription().toUpperCase());
         System.out.println("Vendor     : " + this.getVendor().toUpperCase());
 
-        String formattedAmount = String.format("+$%.2f", this.getAmount());
+        char sign = this.getAmount() > 0 ? '+' : '-';
+        String formattedAmount = String.format("%c$%.2f",sign,Math.abs(this.getAmount()));
         System.out.println("Amount     : " + formattedAmount);
         System.out.println("Category   : " + this.getCategory());
         System.out.println("-------------------------------");

@@ -6,8 +6,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import static com.ps.Actions.scanner;
-import static com.ps.Actions.transactions;
+
+import static com.ps.Actions.*;
 
 public class Reports {
     static void searchByVendor() {
@@ -323,7 +323,7 @@ public class Reports {
             for (Transaction t : list) {
                 writer.write(String.format("%s | %s | %s | %s | $%.2f | %s\n",
                         t.getDate(),
-                        t.getTime().truncatedTo(ChronoUnit.SECONDS),
+                        formatTime(t.getTime()),
                         t.getDescription(),
                         t.getVendor(),
                         t.getAmount(),

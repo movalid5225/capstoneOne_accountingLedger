@@ -27,6 +27,14 @@ public class Actions {
                 transactions.add(transaction);
             }
 
+            transactions.sort((t1, t2) -> {
+                int comparison = t1.getDate().compareTo(t2.getDate());
+                if (comparison == 0) {
+                    return t1.getTime().compareTo(t2.getTime());
+                }
+                return comparison;
+            });
+
             buffReader.close();
         }
         catch(Exception e){
@@ -125,7 +133,7 @@ public class Actions {
             try{
                 categoryNum = Short.parseShort(scanner.nextLine());
                 while(categoryNum > 6 || categoryNum < 1){
-                    System.out.println("ENTER A VALID OPTION");
+                    System.out.print("ENTER A VALID OPTION: ");
                     categoryNum = Short.parseShort(scanner.nextLine());
                 }
                 category = convertToCategory(categoryNum);
@@ -249,6 +257,15 @@ public class Actions {
 
 
 //  Helper functions
+    public static String formatTime(LocalTime time) {
+        return time.truncatedTo(ChronoUnit.MINUTES).format(java.time.format.DateTimeFormatter.ofPattern("hh:mm a"));
+    }
+
+
+
+
+
+
     private static String convertToCategory(short choice){
         return switch (choice) {
             case 1 -> "HOUSING";

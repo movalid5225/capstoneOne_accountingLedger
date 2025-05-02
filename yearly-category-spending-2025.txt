@@ -1,7 +1,0 @@
-Yearly Category Spending
-Period: 2025-01-01 to 2025-12-31
-=====================================
-TRANSPORTATION            : $30.50
-MISCELLANEOUS             : $157.99
-LIFESTYLE & ENTERTAINMENT : $2012.98
-=====================================
