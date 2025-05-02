@@ -1,17 +1,10 @@
 package com.ps;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-
-
-
-
 
 public class Actions {
     public static final ArrayList<Transaction> transactions = new ArrayList<>();
@@ -26,11 +19,11 @@ public class Actions {
             BufferedReader buffReader = new BufferedReader(new FileReader("transactions.txt"));
             buffReader.readLine();
             String input;
-            while((input= buffReader.readLine()) != null ){
+            while((input = buffReader.readLine()) != null ) {
                 String[] line = input.split("\\|");
                 LocalDate date = LocalDate.parse(line[0]);
                 LocalTime time = LocalTime.parse(line[1]);
-                Transaction transaction = new Transaction(date,time, line[2], line[3], Double.parseDouble(line[4]),line[5]);
+                Transaction transaction = new Transaction(date, time, line[2], line[3], Double.parseDouble(line[4]), line[5]);
                 transactions.add(transaction);
             }
 
@@ -96,7 +89,7 @@ public class Actions {
         System.out.println("\n==================================");
         System.out.println("ARE YOUR READY TO MAKE A DEPOSIT?");
         System.out.println("==================================\n");
-        System.out.print("ENTER THE DESCRIPTION OF YOUR ITEM: ");
+        System.out.print("ENTER THE DESCRIPTION OF YOUR DEPOSIT: ");
         String description = scanner.nextLine();
 
         System.out.print("ENTER THE NAME OF THE VENDOR: ");
@@ -122,7 +115,7 @@ public class Actions {
         String category;
         short categoryNum;
         while(true) {
-            System.out.println("ENTER CATEGORY OF YOUR ITEM");
+            System.out.println("ENTER CATEGORY OF YOUR TRANSACTION");
             System.out.println("1)HOUSING");
             System.out.println("2)FOOD");
             System.out.println("3)TRANSPORTATION");
@@ -162,7 +155,7 @@ public class Actions {
         System.out.println("ARE YOUR READY TO MAKE A PAYMENT?");
         System.out.println("==================================\n");
 
-        System.out.print("ENTER THE DESCRIPTION OF YOUR ITEM: ");
+        System.out.print("ENTER THE DESCRIPTION OF YOUR PAYMENT: ");
         String description = scanner.nextLine();
 
         System.out.print("ENTER THE NAME OF THE VENDOR: ");
@@ -188,7 +181,7 @@ public class Actions {
         String category;
         short categoryNum;
         while(true) {
-            System.out.println("ENTER CATEGORY OF YOUR ITEM");
+            System.out.println("ENTER CATEGORY OF YOUR TRANSACTION");
             System.out.println("1)HOUSING");
             System.out.println("2)FOOD");
             System.out.println("3)TRANSPORTATION");
@@ -255,7 +248,23 @@ public class Actions {
 
 
 
-//  Helper
+//  Helper functions
+    private static String convertToCategory(short choice){
+        return switch (choice) {
+            case 1 -> "HOUSING";
+            case 2 -> "FOOD";
+            case 3 -> "TRANSPORTATION";
+            case 4 -> "HEALTH & PERSONAL";
+            case 5 -> "LIFESTYLE & ENTERTAINMENT";
+            case 6 -> "MISCELLANEOUS";
+            default -> "null";
+        };
+    }
+
+
+
+
+
     private static void writeTransaction(LocalDate date, String timeStr, String description ,String name, double amount,String category ,String transactionType, Transaction transaction){
         try {
             BufferedWriter buffWriter = new BufferedWriter(new FileWriter("Transactions.txt", true));
@@ -328,6 +337,7 @@ public class Actions {
                     break;
                 case 6:
                     Reports.viewCategorySpending();
+                    break;
                 case 0:
                     System.out.println("\n\nGOING BACK.....");
                     return;
@@ -369,17 +379,5 @@ public class Actions {
         for(Transaction transaction : transactions){
             transaction.printTransaction();
         }
-    }
-
-    private static String convertToCategory(short choice){
-        return switch (choice) {
-            case 1 -> "HOUSING";
-            case 2 -> "FOOD";
-            case 3 -> "TRANSPORTATION";
-            case 4 -> "HEALTH & PERSONAL";
-            case 5 -> "LIFESTYLE & ENTERTAINMENT";
-            case 6 -> "MISCELLANEOUS";
-            default -> "null";
-        };
     }
 }

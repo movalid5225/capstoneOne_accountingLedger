@@ -1,5 +1,4 @@
 package com.ps;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -12,6 +11,7 @@ public class Transaction {
     private double amount;
     private String category;
 
+//  Default constructor
     public Transaction() {
         this.amount = 0;
         this.vendor = "";
@@ -79,18 +79,19 @@ public class Transaction {
     public void setCategory(String category) {
         this.category = category;
     }
+
+//  Prints a transaction
     public void printTransaction(){
         String timeStr = this.getTime().truncatedTo(ChronoUnit.SECONDS).toString();
         System.out.println("-------------------------------");
         System.out.println("Date       : " + this.getDate());
         System.out.println("Time       : " + timeStr);
-        System.out.println("Description: " + this.getDescription());
-        System.out.println("Vendor     : " + this.getVendor());
+        System.out.println("Description: " + this.getDescription().toUpperCase());
+        System.out.println("Vendor     : " + this.getVendor().toUpperCase());
 
         String formattedAmount = String.format("+$%.2f", this.getAmount());
         System.out.println("Amount     : " + formattedAmount);
         System.out.println("Category   : " + this.getCategory());
         System.out.println("-------------------------------");
     }
-
 }
